@@ -15,9 +15,14 @@ import model.exceptions.DbException;
 public class CustomerRepository {
 
     private Statement sqlStatement;
-    private static PreparedStatement sqlPreparedStatement;
+    private PreparedStatement sqlPreparedStatement = null;
     private ResultSet sqlResultSet;
-    private static Connection dbConnection;
+    private static Connection dbConnection = null;
+    private DatabaseConnection databaseConnection = new DatabaseConnection();
+
+    public CustomerRepository () {
+
+    }
 
     public Customer findById(int id) {
 
@@ -51,7 +56,7 @@ public class CustomerRepository {
         } catch (SQLException e) {
             throw new DbException("SQL statement execution error. Message: " + e.getMessage());
         } finally {
-            DatabaseConnection.closeSqlStatement();
+            DatabaseConnection.closeSqlStatement(sqlStatement);
         }
         
     }
@@ -89,18 +94,23 @@ public class CustomerRepository {
         } catch (SQLException e) {
             throw new DbException("SQL statement execution error. Message: " + e.getMessage());
         } finally {
-            DatabaseConnection.closeSqlResultSet();
+            DatabaseConnection.closeSqlResultSet(sqlResultSet);
         }
     }
 
-    public static void save(CustomerDTO customerDTO) {
+    public void save(CustomerDTO customerDTO) {
+       
           try {
+
+            dbConnection = databaseConnection.getConnection();
+            
+
             sqlPreparedStatement = dbConnection.prepareStatement(
-                "INSERT INTO CUSTOMER "
+                "INSERT INTO CUSTOMERS "
                 + "(name, address, marketSegment, zipcode, isActive, createdBy, createdDate) "
                 + "VALUES "
                 + "(?,?,?,?,?,?,?);"
-                ,PreparedStatement.RETURN_GENERATED_KEYS);
+                );
 
 
             sqlPreparedStatement.setString(1,customerDTO.nameString);
@@ -119,7 +129,7 @@ public class CustomerRepository {
         } catch (SQLException e) {
             throw new DbException("Insert error. MEssages: " + e.getMessage());
         } finally {
-            DatabaseConnection.closeSqlPreparedStatement();
+            DatabaseConnection.closeSqlPreparedStatement(sqlPreparedStatement);
         } 
     }
 

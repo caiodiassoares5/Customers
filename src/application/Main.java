@@ -10,10 +10,11 @@ import model.repository.DatabaseConnection;
 
 public class Main {
     
-    public static void main(String args) {
+    public static void main(String[] args) {
 
         Scanner scanner = new Scanner(System.in);
-        DatabaseConnection dbConnection = new DatabaseConnection();
+        DatabaseConnection dbConnection = new DatabaseConnection();     
+        CustomerRepository customerRepository = new CustomerRepository();   
 
         try {
                 
@@ -50,7 +51,7 @@ public class Main {
                 withCreatedByString(createdBy).
                 withCreatedDate(new java.sql.Date(sdf.parse(createdDate).getTime()));
 
-                CustomerRepository.save(customerDTO);
+                customerRepository.save(customerDTO);
 
         } catch (Exception e) {
             throw new DbException("Runtime error. MEssages: " + e.getMessage());

@@ -15,10 +15,7 @@ import model.exceptions.DbException;
 public class DatabaseConnection {
     
     private static Connection dbConnection;
-    private static Statement sqlStatement;
-    private static ResultSet sqlResultSet;
-    private static Properties dbProperties;
-    private static PreparedStatement sqlPreparedStatement;
+ 
 
     public DatabaseConnection (){
 
@@ -28,18 +25,22 @@ public class DatabaseConnection {
     public static Properties getProperties() {
 
         try (FileInputStream fileInputStream = new FileInputStream("db.properties")) {
-            dbProperties.load(fileInputStream);            
+            Properties dbProperties = new Properties();
+            dbProperties.load(fileInputStream);  
+            return dbProperties;          
         } catch (IOException e) {            
             throw new DbException("Configuration file initialization error. Messaege: " + e.getMessage());
-        }        
-        return dbProperties;
+        }                
     }
 
 
-    public static Connection getConnection() {
+    public Connection getConnection() {
         try {
-            String dbUrl = dbProperties.getProperty("dburl");
-            dbConnection=DriverManager.getConnection(dbUrl, dbProperties);
+            Properties prop = getProperties();
+            String dbUrl = prop.getProperty("dburl");
+            String dbUser = prop.getProperty("user");
+            String dbPassword = prop.getProperty("password");
+            dbConnection=DriverManager.getConnection(dbUrl, dbUser, dbPassword);
             return dbConnection;
         } catch (SQLException e) {
             throw new DbException("Database connection error. Message: " + e.getMessage());
@@ -56,7 +57,7 @@ public class DatabaseConnection {
     }
 
 
-    public static void closeSqlResultSet() {
+    public static void closeSqlResultSet(ResultSet sqlResultSet) {
         try {
             sqlResultSet.close();
         } catch (SQLException e) {
@@ -64,7 +65,7 @@ public class DatabaseConnection {
         }
     }
 
-    public static void closeSqlStatement() {
+    public static void closeSqlStatement(Statement sqlStatement) {
         try {
             sqlStatement.close();
         } catch (SQLException e) {
@@ -72,13 +73,11 @@ public class DatabaseConnection {
         }
     }
 
-    public static void closeSqlPreparedStatement() {
+    public static void closeSqlPreparedStatement(PreparedStatement sqlPreparedStatement) {
         try {
             sqlPreparedStatement.close();
         } catch (SQLException e) {
             throw new DbException("Close prepared statement error. Message " + e.getMessage());
         }
     }
-
-
 }
