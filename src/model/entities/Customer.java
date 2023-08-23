@@ -61,56 +61,63 @@ public class Customer {
         return nameString;
     }
 
-    public void setNameString(String nameString) {
+    public Customer setNameString(String nameString) {
         this.nameString = nameString;
+        return this;
     }
 
     public String getAddressString() {
         return addressString;
     }
 
-    public void setAddressString(String addressString) {
+    public Customer setAddressString(String addressString) {
         this.addressString = addressString;
+        return this;
     }
 
     public String getMarketSegmentString() {
         return marketSegmentString;
     }
 
-    public void setMarketSegmentString(String marketSegmentString) {
+    public Customer setMarketSegmentString(String marketSegmentString) {
         this.marketSegmentString = marketSegmentString;
+        return this;
     }
 
     public Integer getZipCodeInteger() {
         return zipCodeInteger;
     }
 
-    public void setZipCodeInteger(Integer zipCodeInteger) {
+    public Customer setZipCodeInteger(Integer zipCodeInteger) {
         this.zipCodeInteger = zipCodeInteger;
+        return this;
     }
 
     public int getIsActiveInteger() {
         return isActiveInteger;
     }
 
-    public void setIsActiveChar(int isActiveInteger) {
+    public Customer setIsActiveChar(int isActiveInteger) {
         this.isActiveInteger = isActiveInteger;
+        return this;
     }
 
     public String getModifiedByString() {
         return modifiedByString;
     }
 
-    public void setModifiedByString(String modifiedByString) {
+    public Customer setModifiedByString(String modifiedByString) {
         this.modifiedByString = modifiedByString;
+        return this;
     }
 
     public Date getModifiedDate() {
         return modifiedDate;
     }
 
-    public void setModifiedDate(Date modifiedDate) {
+    public Customer setModifiedDate(Date modifiedDate) {
         this.modifiedDate = modifiedDate;
+        return this;
     }
 
     @Override

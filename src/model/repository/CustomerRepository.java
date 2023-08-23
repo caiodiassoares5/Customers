@@ -124,4 +124,51 @@ public class CustomerRepository {
         } 
     }
 
+    public void deleteById(int id) {
+        try {
+            StringBuilder sqlTextStringBuilder = new StringBuilder("DELETE FROM Customers ");
+            sqlTextStringBuilder.append("WHERE id = ");
+            sqlTextStringBuilder.append(id);
+
+            sqlStatement.executeQuery(sqlTextStringBuilder.toString());
+        } catch (SQLException e) {
+            throw new DbException("DeleteById function execution error. Message: " + e.getMessage());
+        } finally {
+            DatabaseConnection.closeSqlStatement(sqlStatement);
+        }        
+    }    
+
+    public void updateById(int id, CustomerDTO customerDTO) {
+          try {
+            sqlPreparedStatement = dbConnection.prepareStatement(
+                 "UPDATE CUSTOMERS "
+                +"set name = ? ,"
+                +"address = ? , "
+                +"marketSegment = ? , "
+                +"zipcode = ? , "
+                +"isActive = ? , "
+                +"modifiedBy = ? , " 
+                +"modifiedDate = ? "
+                + "WHERE  "
+                + "id = ?;"
+                );
+            sqlPreparedStatement.setString(1,customerDTO.nameString);
+            sqlPreparedStatement.setString(2, customerDTO.addressString);
+            sqlPreparedStatement.setString(3, customerDTO.marketSegmentString);
+            sqlPreparedStatement.setInt(4, customerDTO.zipCodeInteger);            
+            sqlPreparedStatement.setInt(5, customerDTO.isActiveInteger);
+            sqlPreparedStatement.setString(6, customerDTO.modifiedByString);
+            sqlPreparedStatement.setDate(7, customerDTO.modifiedDate);    
+            sqlPreparedStatement.setInt(8, id); 
+    
+            sqlPreparedStatement.executeUpdate();  
+        } catch (SQLException e) {
+            throw new DbException("Update error. MEssages: " + e.getMessage());
+        } finally {
+            DatabaseConnection.closeSqlPreparedStatement(sqlPreparedStatement);
+        }       
+    }   
+
+
+
 }
