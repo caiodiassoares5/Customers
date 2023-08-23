@@ -113,6 +113,14 @@ public class Customer {
         this.modifiedDate = modifiedDate;
     }
 
+    @Override
+    public String toString() {
+        return "Customer [idInteger=" + idInteger + ", nameString=" + nameString + ", addressString=" + addressString
+                + ", marketSegmentString=" + marketSegmentString + ", zipCodeInteger=" + zipCodeInteger
+                + ", isActiveInteger=" + isActiveInteger + ", createdByString=" + createdByString + ", createdDate="
+                + createdDate + ", modifiedByString=" + modifiedByString + ", modifiedDate=" + modifiedDate + "]\n";
+    }
+
     
 
 

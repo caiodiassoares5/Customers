@@ -14,25 +14,29 @@ import model.exceptions.DbException;
 
 public class CustomerRepository {
 
-    private Statement sqlStatement;
+    private Statement sqlStatement = null;
     private PreparedStatement sqlPreparedStatement = null;
     private ResultSet sqlResultSet;
     private static Connection dbConnection = null;
     private DatabaseConnection databaseConnection = new DatabaseConnection();
 
-    public CustomerRepository () {
-
+    public CustomerRepository () {        
+        try {
+            dbConnection = databaseConnection.getConnection();
+            sqlStatement = dbConnection.createStatement();
+        } catch (SQLException e) {
+            throw new DbException("Connection error: " + e.getMessage());
+        }
     }
 
     public Customer findById(int id) {
-
         try {
             StringBuilder sqlTextStringBuilder = new StringBuilder("SELECT * FROM Customers ");
             sqlTextStringBuilder.append("WHERE id = ");
             sqlTextStringBuilder.append(id);
 
             sqlResultSet = sqlStatement.executeQuery(sqlTextStringBuilder.toString());
-
+            sqlResultSet.next();
             CustomerDTO customerDTO = new CustomerDTO();
 
             customerDTO.withIdInteger(sqlResultSet.getInt("id")).
@@ -42,7 +46,7 @@ public class CustomerRepository {
                     withZipCodeInteger(sqlResultSet.getInt("zipcode")).
                     withIsActiveInteger(sqlResultSet.getInt("isActive")).
                     withCreatedByString(sqlResultSet.getString("createdBy")).
-                    withCreatedDate(sqlResultSet.getDate("createdByDate")).
+                    withCreatedDate(sqlResultSet.getDate("createdDate")).
                     withModifiedByString(sqlResultSet.getString("modifiedBy")).
                     withModifiedDate(sqlResultSet.getDate("modifiedDate"));
 
@@ -51,21 +55,19 @@ public class CustomerRepository {
             customerDTO.createdByString, customerDTO.createdDate, customerDTO.modifiedByString, customerDTO.modifiedDate);
 
             return customer;
-
-
         } catch (SQLException e) {
             throw new DbException("SQL statement execution error. Message: " + e.getMessage());
         } finally {
             DatabaseConnection.closeSqlStatement(sqlStatement);
-        }
-        
+        }        
     }
 
     public List<Customer> findAll() {
 
         try {
             StringBuilder sqlTextStringBuilder = new StringBuilder("SELECT * FROM Customers ");
-
+            
+            sqlStatement = dbConnection.createStatement();
             sqlResultSet = sqlStatement.executeQuery(sqlTextStringBuilder.toString());
             List<Customer> customerList = new ArrayList<>();
 
@@ -80,7 +82,7 @@ public class CustomerRepository {
                         withZipCodeInteger(sqlResultSet.getInt("zipcode")).
                         withIsActiveInteger(sqlResultSet.getInt("isActive")).
                         withCreatedByString(sqlResultSet.getString("createdBy")).
-                        withCreatedDate(sqlResultSet.getDate("createdByDate")).
+                        withCreatedDate(sqlResultSet.getDate("createdDate")).
                         withModifiedByString(sqlResultSet.getString("modifiedBy")).
                         withModifiedDate(sqlResultSet.getDate("modifiedDate"));
 
@@ -98,34 +100,23 @@ public class CustomerRepository {
         }
     }
 
-    public void save(CustomerDTO customerDTO) {
-       
+    public void save(CustomerDTO customerDTO) {       
           try {
-
-            dbConnection = databaseConnection.getConnection();
-            
-
             sqlPreparedStatement = dbConnection.prepareStatement(
                 "INSERT INTO CUSTOMERS "
                 + "(name, address, marketSegment, zipcode, isActive, createdBy, createdDate) "
                 + "VALUES "
                 + "(?,?,?,?,?,?,?);"
                 );
-
-
             sqlPreparedStatement.setString(1,customerDTO.nameString);
             sqlPreparedStatement.setString(2, customerDTO.addressString);
             sqlPreparedStatement.setString(3, customerDTO.marketSegmentString);
             sqlPreparedStatement.setInt(4, customerDTO.zipCodeInteger);            
             sqlPreparedStatement.setInt(5, customerDTO.isActiveInteger);
             sqlPreparedStatement.setString(6, customerDTO.createdByString);
-            sqlPreparedStatement.setDate(7, customerDTO.createdDate);
-
-        
+            sqlPreparedStatement.setDate(7, customerDTO.createdDate);        
     
-            sqlPreparedStatement.executeUpdate();    
-        
-            
+            sqlPreparedStatement.executeUpdate();  
         } catch (SQLException e) {
             throw new DbException("Insert error. MEssages: " + e.getMessage());
         } finally {
