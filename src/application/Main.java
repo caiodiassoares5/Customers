@@ -16,12 +16,9 @@ public class Main {
     public static void main(String[] args) {
 
         Scanner scanner = new Scanner(System.in);
-        DatabaseConnection dbConnection = new DatabaseConnection();     
         int selectedMenuOption;
 
-
-        try {     
-            
+        try {                 
             System.out.println("*****CUSTOMER APP*******");
             System.out.println("Please select one of the following options: ");
             System.out.println("1: Create a new customer." 
@@ -57,17 +54,13 @@ public class Main {
         }
         finally{
             scanner.close();
-            if (dbConnection != null) {
-                dbConnection.closeConnection();
+            DatabaseConnection.closeConnection();
             }            
         }
-    }
+    
 
     public static void createCustomer() {
-
-        Scanner scanner = new Scanner(System.in);
-        DatabaseConnection dbConnection = new DatabaseConnection();
-
+        Scanner scanner = new Scanner(System.in);        
         try {
                 SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 
@@ -112,19 +105,15 @@ public class Main {
             throw new DbException("Error in create user function. MEssages: " + e.getMessage());
         }
         finally{
-            scanner.close();
-            dbConnection.closeConnection();
+            scanner.close();            
         }
     }
 
 
-    public static void retrieveCustomerById() {
-                
+    public static void retrieveCustomerById() {                
         Scanner scanner = new Scanner(System.in);
         Customer customer = new Customer();
         CustomerRepository customerRepository = new CustomerRepository();
-        DatabaseConnection dbConnection = new DatabaseConnection();
-
         try {
                 System.out.println("Insira um ID para pesquisa unitária: ");
                 int idForSearch = scanner.nextInt();
@@ -138,39 +127,27 @@ public class Main {
             throw new DbException("Error in retrieveCustomerById function. MEssages: " + e.getMessage());
         }
         finally{
-            scanner.close();
-            dbConnection.closeConnection();
-        }
-         
+            scanner.close();            
+        }         
     }
 
 
-    public static void getAllCustomers() {
-        
-        CustomerRepository customerRepository = new CustomerRepository();
-        DatabaseConnection dbConnection = new DatabaseConnection();
+    public static void getAllCustomers() {        
+        CustomerRepository customerRepository = new CustomerRepository();        
         List<Customer> customerList = new ArrayList<>();
-
         try {                
             customerList = customerRepository.findAll();             
-            customerList.stream().forEach(System.out::println);            
-
+            customerList.stream().forEach(System.out::println); 
         }  catch (Exception e) {
             throw new DbException("Error in retrieveAllCustomers function. MEssages: " + e.getMessage());
         }
-        finally{            
-            dbConnection.closeConnection();
-        }
     }
 
 
-    public static void deleteCustomerById() {
-                
+    public static void deleteCustomerById() {                
         Scanner scanner = new Scanner(System.in);
         Customer customer = new Customer();
-        CustomerRepository customerRepository = new CustomerRepository();
-        DatabaseConnection dbConnection = new DatabaseConnection();
-
+        CustomerRepository customerRepository = new CustomerRepository(); 
         try {
                 System.out.println("Please insert a customer Id to delete: ");
                 int idForDelete = scanner.nextInt();
@@ -182,29 +159,24 @@ public class Main {
 
                 System.out.println("Customer will be deleted. Are you sure? (y/n)");
                 char isSureForDelete = scanner.next().charAt(0);
+                scanner.nextLine();
                 
                 if (isSureForDelete == 'y') {
                     customerRepository.deleteById(idForDelete);
                     System.out.println("User removed successfully");
                 }
-
         }  catch (Exception e) {
             throw new DbException("Error in deleteCustomerById function. MEssages: " + e.getMessage());
         }
         finally{
-            scanner.close();
-            dbConnection.closeConnection();
-        }
-         
+            scanner.close();            
+        }         
     }
 
-    public static void modifyCustomerById() {
-                
+    public static void modifyCustomerById() {                
         Scanner scanner = new Scanner(System.in);
         Customer customer = new Customer();
         CustomerRepository customerRepository = new CustomerRepository();
-        DatabaseConnection dbConnection = new DatabaseConnection();
-
         try {
                 System.out.println("Please insert a customer Id to modify: ");
                 int idForModify = scanner.nextInt();
@@ -267,15 +239,11 @@ public class Main {
                     customerRepository.updateById(idForModify, customerDTO);
                     System.out.println("Change was successfull.");
                 }
-
         }  catch (Exception e) {
             throw new DbException("Error in modifyCustomerById function. MEssages: " + e.getMessage());
         }
         finally{
-            scanner.close();
-            dbConnection.closeConnection();
-        }
-         
+            scanner.close();            
+        }         
     }
-
 }

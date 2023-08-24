@@ -18,11 +18,11 @@ public class CustomerRepository {
     private PreparedStatement sqlPreparedStatement = null;
     private ResultSet sqlResultSet;
     private static Connection dbConnection = null;
-    private DatabaseConnection databaseConnection = new DatabaseConnection();
+    
 
     public CustomerRepository () {        
         try {
-            dbConnection = databaseConnection.getConnection();
+            dbConnection = DatabaseConnection.getConnection();
             sqlStatement = dbConnection.createStatement();
         } catch (SQLException e) {
             throw new DbException("Connection error: " + e.getMessage());
@@ -126,15 +126,14 @@ public class CustomerRepository {
 
     public void deleteById(int id) {
         try {
-            StringBuilder sqlTextStringBuilder = new StringBuilder("DELETE FROM Customers ");
-            sqlTextStringBuilder.append("WHERE id = ");
-            sqlTextStringBuilder.append(id);
+            sqlPreparedStatement = dbConnection.prepareStatement("DELETE FROM Customers WHERE id = ?");
+            sqlPreparedStatement.setInt(1, id);
+            sqlPreparedStatement.executeUpdate();
 
-            sqlStatement.executeQuery(sqlTextStringBuilder.toString());
         } catch (SQLException e) {
             throw new DbException("DeleteById function execution error. Message: " + e.getMessage());
         } finally {
-            DatabaseConnection.closeSqlStatement(sqlStatement);
+            DatabaseConnection.closeSqlPreparedStatement(sqlPreparedStatement);
         }        
     }    
 

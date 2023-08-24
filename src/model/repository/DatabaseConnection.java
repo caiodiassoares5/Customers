@@ -34,7 +34,7 @@ public class DatabaseConnection {
     }
 
 
-    public Connection getConnection() {
+    public static Connection getConnection() {
         try {
             Properties prop = getProperties();
             String dbUrl = prop.getProperty("dburl");
@@ -48,9 +48,11 @@ public class DatabaseConnection {
     }
 
 
-    public void closeConnection() {
+    public static void closeConnection() {
         try {
-            dbConnection.close();
+            if (dbConnection != null) {
+                dbConnection.close();
+            }            
         } catch (SQLException e) {
             throw new DbException("Database close connection error. Message: " + e.getMessage());
         }
